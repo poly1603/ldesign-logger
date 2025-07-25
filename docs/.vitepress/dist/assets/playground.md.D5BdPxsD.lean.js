@@ -1,0 +1,1 @@
+import{_ as i,c as a,o as n,ae as h}from"./chunks/framework.Cd-3tpCq.js";const g=JSON.parse('{"title":"交互式演示","description":"","frontmatter":{},"headers":[],"relativePath":"playground.md","filePath":"playground.md"}'),k={name:"playground.md"};function l(t,s,p,E,e,r){return n(),a("div",null,s[0]||(s[0]=[h("",40)]))}const y=i(k,[["render",l]]);export{g as __pageData,y as default};
