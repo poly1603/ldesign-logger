@@ -1,0 +1,30 @@
+/**
+ * @ldesign/logger - 企业级日志系统
+ * 
+ * @packageDocumentation
+ */
+
+// 导出类型
+export type * from './types'
+
+// 导出核心
+export { Logger, createLogger } from './core'
+
+// 导出传输器
+export * from './transports'
+
+// 创建默认 logger 实例
+import { createLogger } from './core'
+import { createConsoleTransport } from './transports'
+
+/**
+ * 默认 Logger 实例
+ */
+export const logger = createLogger({
+  name: 'ldesign',
+  transports: [createConsoleTransport()],
+})
+
+// 导出便捷方法
+export const { trace, debug, info, warn, error, fatal } = logger
+
