@@ -1,5 +1,7 @@
 import type { ILogger, LogEntry, LogLevel, LoggerConfig, LogTransport } from '../types'
 import { LogLevelNames } from '../types'
+import type { LogFilter } from '../filters/LogFilter'
+import { isProduction } from '../utils/environment'
 
 /**
  * Logger 核心实现
@@ -7,6 +9,7 @@ import { LogLevelNames } from '../types'
 export class Logger implements ILogger {
   private config: Required<LoggerConfig>
   private transports: LogTransport[] = []
+  private filters: LogFilter[] = []
 
   constructor(config: LoggerConfig = {}) {
     this.config = {
@@ -78,8 +81,15 @@ export class Logger implements ILogger {
     }
 
     // 生产环境禁用 debug/trace
-    if (this.config.disableDebugInProduction && process.env.NODE_ENV === 'production') {
+    if (this.config.disableDebugInProduction && isProduction()) {
       if (entry.level <= 1) { // TRACE or DEBUG
+        return
+      }
+    }
+
+    // 应用过滤器
+    for (const filter of this.filters) {
+      if (!filter.filter(entry)) {
         return
       }
     }
@@ -148,6 +158,19 @@ export class Logger implements ILogger {
     }
   }
 
+  addFilter(filter: LogFilter): void {
+    if (!this.filters.find(f => f.name === filter.name)) {
+      this.filters.push(filter)
+    }
+  }
+
+  removeFilter(name: string): void {
+    const index = this.filters.findIndex(f => f.name === name)
+    if (index !== -1) {
+      this.filters.splice(index, 1)
+    }
+  }
+
   setLevel(level: LogLevel): void {
     this.config.level = level
   }
@@ -201,4 +224,9 @@ export class Logger implements ILogger {
 export function createLogger(config?: LoggerConfig): ILogger {
   return new Logger(config)
 }
+
+
+
+
+
 

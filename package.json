@@ -35,37 +35,79 @@
       "import": "./es/core/index.js",
       "require": "./lib/core/index.cjs"
     },
-    "./transports": {
-      "types": "./es/transports/index.d.ts",
-      "import": "./es/transports/index.js",
-      "require": "./lib/transports/index.cjs"
+    "./core/*": {
+      "types": "./es/core/*.d.ts",
+      "import": "./es/core/*.js",
+      "require": "./lib/core/*.cjs"
+    },
+    "./filters": {
+      "types": "./es/filters/index.d.ts",
+      "import": "./es/filters/index.js",
+      "require": "./lib/filters/index.cjs"
+    },
+    "./filters/*": {
+      "types": "./es/filters/*.d.ts",
+      "import": "./es/filters/*.js",
+      "require": "./lib/filters/*.cjs"
     },
     "./formatters": {
       "types": "./es/formatters/index.d.ts",
       "import": "./es/formatters/index.js",
       "require": "./lib/formatters/index.cjs"
     },
-    "./utils": {
-      "types": "./es/utils/index.d.ts",
-      "import": "./es/utils/index.js",
-      "require": "./lib/utils/index.cjs"
+    "./formatters/*": {
+      "types": "./es/formatters/*.d.ts",
+      "import": "./es/formatters/*.js",
+      "require": "./lib/formatters/*.cjs"
+    },
+    "./transports": {
+      "types": "./es/transports/index.d.ts",
+      "import": "./es/transports/index.js",
+      "require": "./lib/transports/index.cjs"
+    },
+    "./transports/*": {
+      "types": "./es/transports/*.d.ts",
+      "import": "./es/transports/*.js",
+      "require": "./lib/transports/*.cjs"
     },
     "./types": {
       "types": "./es/types/index.d.ts",
       "import": "./es/types/index.js",
       "require": "./lib/types/index.cjs"
+    },
+    "./types/*": {
+      "types": "./es/types/*.d.ts",
+      "import": "./es/types/*.js",
+      "require": "./lib/types/*.cjs"
+    },
+    "./utils": {
+      "types": "./es/utils/index.d.ts",
+      "import": "./es/utils/index.js",
+      "require": "./lib/utils/index.cjs"
+    },
+    "./utils/*": {
+      "types": "./es/utils/*.d.ts",
+      "import": "./es/utils/*.js",
+      "require": "./lib/utils/*.cjs"
+    },
+    "./__tests__/*": {
+      "types": "./es/__tests__/*.d.ts",
+      "import": "./es/__tests__/*.js",
+      "require": "./lib/__tests__/*.cjs"
     }
   },
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
   "types": "./es/index.d.ts",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
   "files": [
     "README.md",
     "LICENSE",
-    "CHANGELOG.md",
     "package.json",
     "es",
-    "lib"
+    "lib",
+    "dist"
   ],
   "scripts": {
     "build": "ldesign-builder build -f esm,cjs,dts",
@@ -89,6 +131,7 @@
     "@antfu/eslint-config": "^6.0.0",
     "@ldesign/builder": "workspace:*",
     "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^2.1.9",
     "@vitest/ui": "^2.0.0",
     "eslint": "^9.18.0",
     "jsdom": "^24.0.0",
@@ -97,4 +140,5 @@
     "vitest": "^2.0.0"
   }
 }
+
 

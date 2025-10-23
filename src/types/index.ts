@@ -225,6 +225,16 @@ export interface ILogger {
   removeTransport(name: string): void
 
   /**
+   * 添加过滤器
+   */
+  addFilter(filter: any): void
+
+  /**
+   * 移除过滤器
+   */
+  removeFilter(name: string): void
+
+  /**
    * 设置日志级别
    */
   setLevel(level: LogLevel): void
@@ -275,4 +285,9 @@ export interface PerformanceLogEntry {
    */
   data?: any
 }
+
+
+
+
+
 

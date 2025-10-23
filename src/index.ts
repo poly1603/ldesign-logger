@@ -8,10 +8,19 @@
 export type * from './types'
 
 // 导出核心
-export { Logger, createLogger } from './core'
+export { Logger, createLogger, LogBuffer, createLogBuffer } from './core'
 
 // 导出传输器
 export * from './transports'
+
+// 导出格式化器
+export * from './formatters'
+
+// 导出过滤器
+export * from './filters'
+
+// 导出工具函数
+export * from './utils'
 
 // 创建默认 logger 实例
 import { createLogger } from './core'
@@ -27,4 +36,9 @@ export const logger = createLogger({
 
 // 导出便捷方法
 export const { trace, debug, info, warn, error, fatal } = logger
+
+
+
+
+
 

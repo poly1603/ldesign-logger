@@ -3,4 +3,10 @@
  */
 
 export { Logger, createLogger } from './Logger'
+export { LogBuffer, createLogBuffer } from './LogBuffer'
+
+
+
+
+
 
