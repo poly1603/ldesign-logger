@@ -19,6 +19,18 @@ export * from './formatters'
 // 导出过滤器
 export * from './filters'
 
+// 导出查询和导出
+export * from './query'
+
+// 导出采样和限流
+export * from './sampling'
+
+// 导出上下文管理
+export * from './context'
+
+// 导出统计分析
+export * from './stats'
+
 // 导出工具函数
 export * from './utils'
 

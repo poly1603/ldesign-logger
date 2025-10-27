@@ -5,6 +5,7 @@
 export { ConsoleTransport, createConsoleTransport, type ConsoleTransportConfig } from './ConsoleTransport'
 export { StorageTransport, createStorageTransport, type StorageTransportConfig } from './StorageTransport'
 export { HttpTransport, createHttpTransport, type HttpTransportConfig } from './HttpTransport'
+export { WebSocketTransport, createWebSocketTransport, type WebSocketTransportConfig, WebSocketState } from './WebSocketTransport'
 
 
 

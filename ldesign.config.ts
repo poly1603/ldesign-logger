@@ -2,7 +2,7 @@ import { defineConfig } from '@ldesign/builder'
 
 export default defineConfig({
   input: 'src/index.ts',
-  
+
   output: {
     format: ['esm', 'cjs', 'umd'],
     esm: {
@@ -18,12 +18,12 @@ export default defineConfig({
       name: 'LDesignLogger',
     },
   },
-  
+
   dts: true,
   sourcemap: true,
   minify: false,
   clean: true,
-  
+
   external: [
     'vue',
     'react',
@@ -31,9 +31,4 @@ export default defineConfig({
     /^@ldesign\//,
     /^lodash/,
   ],
-  
-  typescript: {
-    declaration: true,
-    declarationMap: true,
-  },
 })

@@ -70,6 +70,46 @@
       "import": "./es/transports/*.js",
       "require": "./lib/transports/*.cjs"
     },
+    "./query": {
+      "types": "./es/query/index.d.ts",
+      "import": "./es/query/index.js",
+      "require": "./lib/query/index.cjs"
+    },
+    "./query/*": {
+      "types": "./es/query/*.d.ts",
+      "import": "./es/query/*.js",
+      "require": "./lib/query/*.cjs"
+    },
+    "./sampling": {
+      "types": "./es/sampling/index.d.ts",
+      "import": "./es/sampling/index.js",
+      "require": "./lib/sampling/index.cjs"
+    },
+    "./sampling/*": {
+      "types": "./es/sampling/*.d.ts",
+      "import": "./es/sampling/*.js",
+      "require": "./lib/sampling/*.cjs"
+    },
+    "./context": {
+      "types": "./es/context/index.d.ts",
+      "import": "./es/context/index.js",
+      "require": "./lib/context/index.cjs"
+    },
+    "./context/*": {
+      "types": "./es/context/*.d.ts",
+      "import": "./es/context/*.js",
+      "require": "./lib/context/*.cjs"
+    },
+    "./stats": {
+      "types": "./es/stats/index.d.ts",
+      "import": "./es/stats/index.js",
+      "require": "./lib/stats/index.cjs"
+    },
+    "./stats/*": {
+      "types": "./es/stats/*.d.ts",
+      "import": "./es/stats/*.js",
+      "require": "./lib/stats/*.cjs"
+    },
     "./types": {
       "types": "./es/types/index.d.ts",
       "import": "./es/types/index.js",
