@@ -30,6 +30,16 @@
       "import": "./es/index.js",
       "require": "./lib/index.cjs"
     },
+    "./context": {
+      "types": "./es/context/index.d.ts",
+      "import": "./es/context/index.js",
+      "require": "./lib/context/index.cjs"
+    },
+    "./context/*": {
+      "types": "./es/context/*.d.ts",
+      "import": "./es/context/*.js",
+      "require": "./lib/context/*.cjs"
+    },
     "./core": {
       "types": "./es/core/index.d.ts",
       "import": "./es/core/index.js",
@@ -60,16 +70,6 @@
       "import": "./es/formatters/*.js",
       "require": "./lib/formatters/*.cjs"
     },
-    "./transports": {
-      "types": "./es/transports/index.d.ts",
-      "import": "./es/transports/index.js",
-      "require": "./lib/transports/index.cjs"
-    },
-    "./transports/*": {
-      "types": "./es/transports/*.d.ts",
-      "import": "./es/transports/*.js",
-      "require": "./lib/transports/*.cjs"
-    },
     "./query": {
       "types": "./es/query/index.d.ts",
       "import": "./es/query/index.js",
@@ -90,16 +90,6 @@
       "import": "./es/sampling/*.js",
       "require": "./lib/sampling/*.cjs"
     },
-    "./context": {
-      "types": "./es/context/index.d.ts",
-      "import": "./es/context/index.js",
-      "require": "./lib/context/index.cjs"
-    },
-    "./context/*": {
-      "types": "./es/context/*.d.ts",
-      "import": "./es/context/*.js",
-      "require": "./lib/context/*.cjs"
-    },
     "./stats": {
       "types": "./es/stats/index.d.ts",
       "import": "./es/stats/index.js",
@@ -109,6 +99,16 @@
       "types": "./es/stats/*.d.ts",
       "import": "./es/stats/*.js",
       "require": "./lib/stats/*.cjs"
+    },
+    "./transports": {
+      "types": "./es/transports/index.d.ts",
+      "import": "./es/transports/index.js",
+      "require": "./lib/transports/index.cjs"
+    },
+    "./transports/*": {
+      "types": "./es/transports/*.d.ts",
+      "import": "./es/transports/*.js",
+      "require": "./lib/transports/*.cjs"
     },
     "./types": {
       "types": "./es/types/index.d.ts",
@@ -146,8 +146,7 @@
     "LICENSE",
     "package.json",
     "es",
-    "lib",
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "ldesign-builder build -f esm,cjs,dts",
