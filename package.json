@@ -158,8 +158,7 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "clean": "rimraf es lib coverage",
-    "prepublishOnly": "pnpm run clean && pnpm run build"
+    "clean": "rimraf es lib coverage"
   },
   "dependencies": {
     "@ldesign/cache": "workspace:*",
