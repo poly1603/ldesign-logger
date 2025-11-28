@@ -1,0 +1,154 @@
+{
+  "name": "@ldesign/logger-core",
+  "version": "1.0.0",
+  "description": "LDesign 企业级日志系统核心 - 框架无关的日志记录、错误追踪和性能监控",
+  "keywords": [
+    "ldesign",
+    "logger",
+    "logging",
+    "error-tracking",
+    "performance",
+    "typescript",
+    "framework-agnostic"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs",
+      "default": "./es/index.js"
+    },
+    "./errors": {
+      "types": "./es/errors/index.d.ts",
+      "import": "./es/errors/index.js",
+      "require": "./lib/errors/index.cjs",
+      "default": "./es/errors/index.js"
+    },
+    "./errors/*": {
+      "types": "./es/errors/*.d.ts",
+      "import": "./es/errors/*.js",
+      "require": "./lib/errors/*.cjs",
+      "default": "./es/errors/*.js"
+    },
+    "./logger": {
+      "types": "./es/logger/index.d.ts",
+      "import": "./es/logger/index.js",
+      "require": "./lib/logger/index.cjs",
+      "default": "./es/logger/index.js"
+    },
+    "./logger/*": {
+      "types": "./es/logger/*.d.ts",
+      "import": "./es/logger/*.js",
+      "require": "./lib/logger/*.cjs",
+      "default": "./es/logger/*.js"
+    },
+    "./performance": {
+      "types": "./es/performance/index.d.ts",
+      "import": "./es/performance/index.js",
+      "require": "./lib/performance/index.cjs",
+      "default": "./es/performance/index.js"
+    },
+    "./performance/*": {
+      "types": "./es/performance/*.d.ts",
+      "import": "./es/performance/*.js",
+      "require": "./lib/performance/*.cjs",
+      "default": "./es/performance/*.js"
+    },
+    "./plugins": {
+      "types": "./es/plugins/index.d.ts",
+      "import": "./es/plugins/index.js",
+      "require": "./lib/plugins/index.cjs",
+      "default": "./es/plugins/index.js"
+    },
+    "./plugins/*": {
+      "types": "./es/plugins/*.d.ts",
+      "import": "./es/plugins/*.js",
+      "require": "./lib/plugins/*.cjs",
+      "default": "./es/plugins/*.js"
+    },
+    "./transports": {
+      "types": "./es/transports/index.d.ts",
+      "import": "./es/transports/index.js",
+      "require": "./lib/transports/index.cjs",
+      "default": "./es/transports/index.js"
+    },
+    "./transports/*": {
+      "types": "./es/transports/*.d.ts",
+      "import": "./es/transports/*.js",
+      "require": "./lib/transports/*.cjs",
+      "default": "./es/transports/*.js"
+    },
+    "./types": {
+      "types": "./es/types/index.d.ts",
+      "import": "./es/types/index.js",
+      "require": "./lib/types/index.cjs",
+      "default": "./es/types/index.js"
+    },
+    "./types/*": {
+      "types": "./es/types/*.d.ts",
+      "import": "./es/types/*.js",
+      "require": "./lib/types/*.cjs",
+      "default": "./es/types/*.js"
+    },
+    "./utils": {
+      "types": "./es/utils/index.d.ts",
+      "import": "./es/utils/index.js",
+      "require": "./lib/utils/index.cjs",
+      "default": "./es/utils/index.js"
+    },
+    "./utils/*": {
+      "types": "./es/utils/*.d.ts",
+      "import": "./es/utils/*.js",
+      "require": "./lib/utils/*.cjs",
+      "default": "./es/utils/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "es",
+    "lib",
+    "dist"
+  ],
+  "scripts": {
+    "build": "ldesign-builder build -f esm,cjs",
+    "build:watch": "ldesign-builder build --watch",
+    "dev": "ldesign-builder build --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rimraf es lib dist coverage .tsbuildinfo",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@ldesign/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^6.0.0",
+    "@ldesign/builder": "workspace:*",
+    "@types/node": "^22.0.0",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.18.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "typings": "./es/index.d.ts",
+  "browser": "./dist/index.js"
+}
