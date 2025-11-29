@@ -34,6 +34,18 @@
       "require": "./lib/errors/*.cjs",
       "default": "./es/errors/*.js"
     },
+    "./formatters": {
+      "types": "./es/formatters/index.d.ts",
+      "import": "./es/formatters/index.js",
+      "require": "./lib/formatters/index.cjs",
+      "default": "./es/formatters/index.js"
+    },
+    "./formatters/*": {
+      "types": "./es/formatters/*.d.ts",
+      "import": "./es/formatters/*.js",
+      "require": "./lib/formatters/*.cjs",
+      "default": "./es/formatters/*.js"
+    },
     "./logger": {
       "types": "./es/logger/index.d.ts",
       "import": "./es/logger/index.js",
@@ -69,6 +81,18 @@
       "import": "./es/plugins/*.js",
       "require": "./lib/plugins/*.cjs",
       "default": "./es/plugins/*.js"
+    },
+    "./styles": {
+      "types": "./es/styles/index.d.ts",
+      "import": "./es/styles/index.js",
+      "require": "./lib/styles/index.cjs",
+      "default": "./es/styles/index.js"
+    },
+    "./styles/*": {
+      "types": "./es/styles/*.d.ts",
+      "import": "./es/styles/*.js",
+      "require": "./lib/styles/*.cjs",
+      "default": "./es/styles/*.js"
     },
     "./transports": {
       "types": "./es/transports/index.d.ts",

@@ -13,6 +13,12 @@ export * from './logger'
 // 传输器
 export * from './transports'
 
+// 格式化器
+export * from './formatters'
+
+// 样式
+export * from './styles'
+
 // 错误追踪
 export * from './errors'
 

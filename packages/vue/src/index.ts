@@ -7,8 +7,11 @@
 // 类型导出
 export * from './types'
 
-// 插件
+// Vue 插件（直接使用）
 export * from './plugin'
+
+// 引擎插件（与其他包统一）
+export * from './plugins'
 
 // Composables
 export * from './composables'
