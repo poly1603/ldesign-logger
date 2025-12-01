@@ -49,6 +49,18 @@
       "require": "./lib/plugin/*.cjs",
       "default": "./es/plugin/*.js"
     },
+    "./plugins": {
+      "types": "./es/plugins/index.d.ts",
+      "import": "./es/plugins/index.js",
+      "require": "./lib/plugins/index.cjs",
+      "default": "./es/plugins/index.js"
+    },
+    "./plugins/*": {
+      "types": "./es/plugins/*.d.ts",
+      "import": "./es/plugins/*.js",
+      "require": "./lib/plugins/*.cjs",
+      "default": "./es/plugins/*.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "./lib/index.cjs",
