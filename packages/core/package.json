@@ -142,8 +142,7 @@
     "LICENSE",
     "CHANGELOG.md",
     "es",
-    "lib",
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "ldesign-builder build -f esm,cjs",
