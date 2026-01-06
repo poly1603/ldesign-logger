@@ -14,6 +14,12 @@ export interface StorageTransportOptions extends StorageOptions {
   level?: LogLevel
   /** 是否启用 */
   enabled?: boolean
+  /** 批量写入大小 */
+  batchSize?: number
+  /** 批量写入间隔（毫秒） */
+  batchInterval?: number
+  /** 是否启用压缩 */
+  compress?: boolean
 }
 
 /**
@@ -25,6 +31,8 @@ export interface StorageTransportOptions extends StorageOptions {
  *   type: 'indexedDB',
  *   dbName: 'app-logs',
  *   maxEntries: 10000,
+ *   batchSize: 50,
+ *   batchInterval: 1000,
  * })
  *
  * logger.addTransport(transport)
@@ -37,7 +45,11 @@ export class StorageTransport implements LogTransport {
 
   private options: Required<StorageTransportOptions>
   private db?: IDBDatabase
+  private dbReady: Promise<void> | null = null
   private memoryStorage: LogEntry[] = []
+  private writeBuffer: LogEntry[] = []
+  private flushTimer: ReturnType<typeof setTimeout> | null = null
+  private isFlushing = false
 
   constructor(options: StorageTransportOptions = { type: 'localStorage' }) {
     this.options = {
@@ -50,6 +62,9 @@ export class StorageTransport implements LogTransport {
       storeName: options.storeName ?? 'logs',
       level: options.level ?? LogLevel.TRACE,
       enabled: options.enabled ?? true,
+      batchSize: options.batchSize ?? 50,
+      batchInterval: options.batchInterval ?? 1000,
+      compress: options.compress ?? false,
     }
 
     this.level = this.options.level
@@ -57,7 +72,7 @@ export class StorageTransport implements LogTransport {
 
     // 初始化 IndexedDB
     if (this.options.type === 'indexedDB') {
-      this.initIndexedDB()
+      this.dbReady = this.initIndexedDB()
     }
   }
 
@@ -69,16 +84,16 @@ export class StorageTransport implements LogTransport {
       return
     }
 
-    switch (this.options.type) {
-      case 'localStorage':
-        this.writeToLocalStorage(entry)
-        break
-      case 'indexedDB':
-        this.writeToIndexedDB(entry)
-        break
-      case 'memory':
-        this.writeToMemory(entry)
-        break
+    // 使用缓冲区批量写入
+    this.writeBuffer.push(entry)
+
+    // 达到批量大小时立即写入
+    if (this.writeBuffer.length >= this.options.batchSize) {
+      this.flushBuffer()
+    }
+    else {
+      // 否则设置延迟写入
+      this.scheduleFlush()
     }
   }
 
@@ -86,8 +101,74 @@ export class StorageTransport implements LogTransport {
    * 批量写入日志
    */
   writeBatch(entries: LogEntry[]): void {
-    for (const entry of entries) {
-      this.write(entry)
+    if (!this.enabled) {
+      return
+    }
+
+    this.writeBuffer.push(...entries)
+
+    if (this.writeBuffer.length >= this.options.batchSize) {
+      this.flushBuffer()
+    }
+    else {
+      this.scheduleFlush()
+    }
+  }
+
+  /**
+   * 刷新缓冲区
+   */
+  async flush(): Promise<void> {
+    await this.flushBuffer()
+  }
+
+  /**
+   * 计划刷新
+   * @private
+   */
+  private scheduleFlush(): void {
+    if (this.flushTimer) {
+      return
+    }
+
+    this.flushTimer = setTimeout(() => {
+      this.flushTimer = null
+      this.flushBuffer()
+    }, this.options.batchInterval)
+  }
+
+  /**
+   * 刷新缓冲区到存储
+   * @private
+   */
+  private async flushBuffer(): Promise<void> {
+    if (this.isFlushing || this.writeBuffer.length === 0) {
+      return
+    }
+
+    this.isFlushing = true
+    const entries = this.writeBuffer.splice(0, this.writeBuffer.length)
+
+    try {
+      switch (this.options.type) {
+        case 'localStorage':
+          this.writeToLocalStorageBatch(entries)
+          break
+        case 'indexedDB':
+          await this.writeToIndexedDBBatch(entries)
+          break
+        case 'memory':
+          this.writeToMemoryBatch(entries)
+          break
+      }
+    }
+    catch (error) {
+      console.error('[StorageTransport] 批量写入失败:', error)
+      // 写入失败时尝试写入内存
+      this.writeToMemoryBatch(entries)
+    }
+    finally {
+      this.isFlushing = false
     }
   }
 
@@ -128,9 +209,81 @@ export class StorageTransport implements LogTransport {
    * 关闭传输器
    */
   async close(): Promise<void> {
+    // 清除定时器
+    if (this.flushTimer) {
+      clearTimeout(this.flushTimer)
+      this.flushTimer = null
+    }
+
+    // 刷新剩余数据
+    await this.flushBuffer()
+
     if (this.db) {
       this.db.close()
       this.db = undefined
+    }
+  }
+
+  /**
+   * 批量写入 localStorage
+   * @private
+   */
+  private writeToLocalStorageBatch(entries: LogEntry[]): void {
+    try {
+      for (const entry of entries) {
+        const key = `${this.options.prefix}${entry.id}`
+        localStorage.setItem(key, JSON.stringify(entry))
+      }
+      this.cleanupLocalStorage()
+    }
+    catch (error) {
+      console.error('[StorageTransport] localStorage 批量写入失败:', error)
+    }
+  }
+
+  /**
+   * 批量写入 IndexedDB
+   * @private
+   */
+  private async writeToIndexedDBBatch(entries: LogEntry[]): Promise<void> {
+    // 等待数据库就绪
+    if (this.dbReady) {
+      await this.dbReady
+    }
+
+    if (!this.db) {
+      this.memoryStorage.push(...entries)
+      return
+    }
+
+    return new Promise((resolve, reject) => {
+      try {
+        const transaction = this.db!.transaction(this.options.storeName, 'readwrite')
+        const store = transaction.objectStore(this.options.storeName)
+
+        for (const entry of entries) {
+          store.put(entry)
+        }
+
+        transaction.oncomplete = () => resolve()
+        transaction.onerror = () => reject(transaction.error)
+      }
+      catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  /**
+   * 批量写入内存
+   * @private
+   */
+  private writeToMemoryBatch(entries: LogEntry[]): void {
+    this.memoryStorage.push(...entries)
+
+    // 限制数量
+    while (this.memoryStorage.length > this.options.maxEntries) {
+      this.memoryStorage.shift()
     }
   }
 

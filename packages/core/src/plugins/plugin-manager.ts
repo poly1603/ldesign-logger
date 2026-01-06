@@ -123,10 +123,10 @@ export class PluginManager {
 
       try {
         const result = await plugin.beforeLog?.(currentEntry)
-        if (result === null || result === false) {
+        if (result === null) {
           return null
         }
-        if (typeof result === 'object') {
+        if (result !== undefined) {
           currentEntry = result
         }
       }

@@ -6,5 +6,6 @@
 export * from './console-transport'
 export * from './http-transport'
 export * from './storage-transport'
+export * from './websocket-transport'
 export * from './dev-bridge-transport'
 

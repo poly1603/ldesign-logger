@@ -1,33 +1,58 @@
 /**
  * @ldesign/logger-core 类型定义
+ * @description 核心日志系统的所有 TypeScript 类型定义
  * @packageDocumentation
  */
+
+// ============================================================================
+// 基础类型
+// ============================================================================
 
 /**
  * 日志级别枚举
  * @description 定义日志的严重程度，从低到高排序
+ * @example
+ * ```ts
+ * if (level >= LogLevel.WARN) {
+ *   // 处理警告及以上级别的日志
+ * }
+ * ```
  */
 export enum LogLevel {
-  /** 追踪级别 - 最详细的日志 */
+  /** 追踪级别 - 最详细的日志，用于追踪代码执行流程 */
   TRACE = 0,
-  /** 调试级别 - 开发调试信息 */
+  /** 调试级别 - 开发调试信息，通常只在开发环境启用 */
   DEBUG = 10,
-  /** 信息级别 - 一般信息 */
+  /** 信息级别 - 一般信息，记录正常的业务流程 */
   INFO = 20,
-  /** 警告级别 - 潜在问题 */
+  /** 警告级别 - 潜在问题，不影响正常运行但需要关注 */
   WARN = 30,
-  /** 错误级别 - 错误信息 */
+  /** 错误级别 - 错误信息，表示出现了需要处理的问题 */
   ERROR = 40,
-  /** 致命级别 - 严重错误 */
+  /** 致命级别 - 严重错误，可能导致应用崩溃 */
   FATAL = 50,
   /** 静默级别 - 不输出任何日志 */
   SILENT = 100,
 }
 
 /**
- * 日志级别名称类型
+ * 日志级别名称类型（字符串字面量类型）
+ * @description 用于类型安全的日志级别字符串表示
  */
 export type LogLevelName = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'
+
+/**
+ * 日志级别数值映射类型
+ * @description 将日志级别名称映射到其数值
+ */
+export type LogLevelValue = LogLevel.TRACE | LogLevel.DEBUG | LogLevel.INFO | LogLevel.WARN | LogLevel.ERROR | LogLevel.FATAL
+
+/**
+ * 日志数据类型
+ * @description 日志附加数据的类型，支持任意可序列化数据
+ * @template T - 数据的具体类型，默认为 unknown
+ */
+export type LogData<T = unknown> = T extends undefined ? undefined : T
 
 /**
  * 日志条目接口
@@ -393,10 +418,20 @@ export interface LoggerPlugin {
   name: string
   /** 插件版本 */
   version?: string
-  /** 安装插件 */
-  install(logger: ILogger, options?: Record<string, unknown>): void
+  /** 安装插件（别名为 init） */
+  install?(logger: ILogger, options?: Record<string, unknown>): void
+  /** 初始化插件 */
+  init?(logger: ILogger): void
   /** 卸载插件 */
   uninstall?(logger: ILogger): void
+  /** 销毁插件 */
+  destroy?(): void | Promise<void>
+  /** 日志前钩子 */
+  beforeLog?(entry: LogEntry): LogEntry | null | Promise<LogEntry | null>
+  /** 日志后钩子 */
+  afterLog?(entry: LogEntry): void | Promise<void>
+  /** 错误钩子 */
+  onError?(error: Error, entry?: LogEntry): void | Promise<void>
 }
 
 /**
@@ -410,5 +445,240 @@ export interface Timer {
   end(): number
   /** 取消计时 */
   cancel(): void
+}
+
+// ============================================================================
+// WebSocket 传输器类型
+// ============================================================================
+
+/**
+ * WebSocket 连接状态
+ * @description WebSocket 传输器的连接状态
+ */
+export type WebSocketState = 'connecting' | 'connected' | 'disconnected' | 'reconnecting'
+
+/**
+ * WebSocket 传输器配置
+ * @description WebSocket 实时日志传输的配置选项
+ */
+export interface WebSocketTransportOptions {
+  /** WebSocket 服务器 URL */
+  url: string
+  /** 最低日志级别 */
+  level?: LogLevel
+  /** 是否启用 */
+  enabled?: boolean
+  /** 是否自动重连 */
+  autoReconnect?: boolean
+  /** 重连间隔（毫秒） */
+  reconnectInterval?: number
+  /** 最大重连次数 */
+  maxReconnectAttempts?: number
+  /** 心跳间隔（毫秒） */
+  heartbeatInterval?: number
+  /** 批量发送大小 */
+  batchSize?: number
+  /** 批量发送间隔（毫秒） */
+  batchInterval?: number
+  /** 连接成功回调 */
+  onConnect?: () => void
+  /** 断开连接回调 */
+  onDisconnect?: (code: number, reason: string) => void
+  /** 错误回调 */
+  onError?: (error: Error) => void
+  /** 自定义协议 */
+  protocols?: string | string[]
+}
+
+// ============================================================================
+// 离线队列类型
+// ============================================================================
+
+/**
+ * 离线队列配置
+ * @description 离线日志队列的配置选项
+ */
+export interface OfflineQueueOptions {
+  /** 最大队列大小 */
+  maxSize?: number
+  /** 存储键名 */
+  storageKey?: string
+  /** 是否使用 IndexedDB（否则使用 localStorage） */
+  useIndexedDB?: boolean
+  /** 网络状态检测间隔（毫秒） */
+  checkInterval?: number
+  /** 重发时的批量大小 */
+  retryBatchSize?: number
+}
+
+/**
+ * 离线日志条目
+ * @description 带有元数据的离线存储日志条目
+ */
+export interface OfflineLogEntry {
+  /** 日志条目 */
+  entry: LogEntry
+  /** 入队时间戳 */
+  queuedAt: number
+  /** 重试次数 */
+  retryCount: number
+  /** 目标传输器名称 */
+  transport: string
+}
+
+// ============================================================================
+// 日志压缩类型
+// ============================================================================
+
+/**
+ * 压缩选项
+ * @description 日志压缩配置
+ */
+export interface CompressionOptions {
+  /** 压缩算法 */
+  algorithm?: 'gzip' | 'deflate' | 'lz-string'
+  /** 压缩阈值（字节），小于此值不压缩 */
+  threshold?: number
+  /** 压缩级别（1-9） */
+  level?: number
+}
+
+// ============================================================================
+// 类型守卫函数
+// ============================================================================
+
+/**
+ * 检查值是否为有效的日志级别
+ * @param value - 要检查的值
+ * @returns 是否为有效的日志级别
+ * @example
+ * ```ts
+ * if (isLogLevel(value)) {
+ *   logger.log(value, 'message')
+ * }
+ * ```
+ */
+export function isLogLevel(value: unknown): value is LogLevel {
+  return typeof value === 'number' && value in LogLevel
+}
+
+/**
+ * 检查值是否为有效的日志级别名称
+ * @param value - 要检查的值
+ * @returns 是否为有效的日志级别名称
+ */
+export function isLogLevelName(value: unknown): value is LogLevelName {
+  return typeof value === 'string' && ['trace', 'debug', 'info', 'warn', 'error', 'fatal'].includes(value)
+}
+
+/**
+ * 检查对象是否为日志条目
+ * @param value - 要检查的值
+ * @returns 是否为日志条目
+ */
+export function isLogEntry(value: unknown): value is LogEntry {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const entry = value as Record<string, unknown>
+  return (
+    typeof entry.id === 'string'
+    && typeof entry.timestamp === 'number'
+    && typeof entry.level === 'number'
+    && typeof entry.levelName === 'string'
+    && typeof entry.message === 'string'
+  )
+}
+
+/**
+ * 检查对象是否为传输器
+ * @param value - 要检查的值
+ * @returns 是否为传输器
+ */
+export function isLogTransport(value: unknown): value is LogTransport {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const transport = value as Record<string, unknown>
+  return typeof transport.name === 'string' && typeof transport.write === 'function'
+}
+
+/**
+ * 检查对象是否为错误信息
+ * @param value - 要检查的值
+ * @returns 是否为错误信息
+ */
+export function isErrorInfo(value: unknown): value is ErrorInfo {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const error = value as Record<string, unknown>
+  return (
+    typeof error.name === 'string'
+    && typeof error.message === 'string'
+    && typeof error.type === 'string'
+  )
+}
+
+// ============================================================================
+// 实用类型
+// ============================================================================
+
+/**
+ * 深度只读类型
+ * @template T - 要转换的类型
+ */
+export type DeepReadonly<T> = T extends (infer R)[]
+  ? ReadonlyArray<DeepReadonly<R>>
+  : T extends object
+    ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+    : T
+
+/**
+ * 深度可选类型
+ * @template T - 要转换的类型
+ */
+export type DeepPartial<T> = T extends object
+  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T
+
+/**
+ * 日志方法名称类型
+ */
+export type LogMethodName = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'log'
+
+/**
+ * 传输器事件类型
+ */
+export type TransportEventType = 'write' | 'flush' | 'error' | 'close'
+
+/**
+ * 传输器事件处理器
+ */
+export type TransportEventHandler<T = unknown> = (data: T) => void | Promise<void>
+
+/**
+ * 日志级别到名称的映射
+ */
+export const LOG_LEVEL_NAMES: Record<LogLevel, LogLevelName | 'silent'> = {
+  [LogLevel.TRACE]: 'trace',
+  [LogLevel.DEBUG]: 'debug',
+  [LogLevel.INFO]: 'info',
+  [LogLevel.WARN]: 'warn',
+  [LogLevel.ERROR]: 'error',
+  [LogLevel.FATAL]: 'fatal',
+  [LogLevel.SILENT]: 'silent',
+}
+
+/**
+ * 日志级别名称到数值的映射
+ */
+export const LOG_LEVEL_VALUES: Record<LogLevelName, LogLevel> = {
+  trace: LogLevel.TRACE,
+  debug: LogLevel.DEBUG,
+  info: LogLevel.INFO,
+  warn: LogLevel.WARN,
+  error: LogLevel.ERROR,
+  fatal: LogLevel.FATAL,
 }
 

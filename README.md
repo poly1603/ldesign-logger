@@ -10,16 +10,17 @@
 
 ### 核心功能
 - 📊 **分级日志** - TRACE/DEBUG/INFO/WARN/ERROR/FATAL 六个级别
-- 💾 **日志持久化** - 支持 LocalStorage 和 IndexedDB（完整实现）
+- 💾 **日志持久化** - 支持 LocalStorage 和 IndexedDB（带批量优化）
 - 🌐 **远程上报** - HTTP/WebSocket 方式实时上报日志
 - ⚡ **高性能** - 对象池、循环缓冲区、批量发送、异步处理
-- 🎯 **TypeScript** - 100% 类型安全，完整类型定义
+- 🎯 **TypeScript** - 100% 类型安全，完整类型定义和类型守卫
 
-### 传输器（4个）
-- 📦 **ConsoleTransport** - 控制台彩色输出
-- 💾 **StorageTransport** - LocalStorage + IndexedDB 持久化
-- 🌐 **HttpTransport** - 批量上报 + 智能重试
-- 🔄 **WebSocketTransport** - 实时推送 + 自动重连
+### 传输器（5个）
+- 📦 **ConsoleTransport** - 控制台彩色输出，支持主题切换
+- 💾 **StorageTransport** - LocalStorage + IndexedDB 持久化（批量优化）
+- 🌐 **HttpTransport** - 批量上报 + 智能重试 + Beacon API
+- 🔄 **WebSocketTransport** - 实时推送 + 自动重连 + 心跳保活
+- 🔗 **DevBridgeTransport** - 开发者工具集成
 
 ### 高级功能
 - 🔍 **日志追踪** - Correlation ID、userId、sessionId 链路追踪
@@ -27,18 +28,18 @@
 - 🎛️ **流量控制** - 速率限制、采样、去重
 - 📈 **性能监控** - 自动计时、API 日志模板、性能指标
 - 🔧 **灵活配置** - 子 Logger、过滤器、格式化器
+- 📱 **离线支持** - 网络断开时缓存，恢复后自动重发
+- 🗜️ **日志压缩** - LZ-String 压缩减少存储和传输大小
+- 🖥️ **日志查看器** - Vue 组件，支持过滤、搜索、导出
 
 ## 📦 安装
 
 ```bash
-# 使用 pnpm（推荐）
-pnpm add @ldesign/logger
+# 核心包
+pnpm add @ldesign/logger-core
 
-# 使用 npm
-npm install @ldesign/logger
-
-# 使用 yarn
-yarn add @ldesign/logger
+# Vue 集成
+pnpm add @ldesign/logger-vue
 ```
 
 ## 🚀 快速开始
